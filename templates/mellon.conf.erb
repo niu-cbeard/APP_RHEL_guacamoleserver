@@ -1,0 +1,26 @@
+# This file is managed by Chef - Cookbook Name :: APP_RHEL_guacamoleserver_0_1_0
+# Any manual changes made to this file will be deleted with the next chef run.
+
+LoadModule auth_mellon_module <%= node['mod_auth_mellon']['module_location'] %>
+
+# This is a server-wide configuration that will add information from the Mellon session to all requests.
+<Location />
+    # Add information from the mod_auth_mellon session to the request.
+    MellonEnable "auth"
+
+    # Configure the SP metadata
+    # This should be the files which were created when creating SP metadata.
+    MellonSPPrivateKeyFile <%= node['apache']['dir'] %><%= node['mod_auth_mellon']['ssl_directory'] %>/<%= node['mod_auth_mellon']['base_url'].downcase %>.key
+
+    MellonSPCertFile <%= node['apache']['dir'] %><%= node['mod_auth_mellon']['ssl_directory'] %>/<%= node['mod_auth_mellon']['base_url'].downcase %>.crt
+    MellonSPMetadataFile <%= node['apache']['dir'] %>/<%= node['mod_auth_mellon']['metadata_location'] %>/<%= node['mod_auth_mellon']['base_url'].downcase %>.xml
+
+    # IdP metadata. This should be the metadata file you got from the IdP.
+    MellonIdPMetadataFile <%= node['apache']['dir'] %>/<%= node['mod_auth_mellon']['metadata_location'] %>/<%= node['mod_auth_mellon']['identity_provider']['metadata_file'] %>
+
+    # The location all endpoints should be located under.
+    # It is the URL to this location that is used as the second parameter to the metadata generation script.
+
+    # This path is relative to the root of the web server.
+    MellonEndpointPath <%= node['mod_auth_mellon']['endpoint_path'] %>
+</Location>

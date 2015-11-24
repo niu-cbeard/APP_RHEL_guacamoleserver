@@ -1,0 +1,33 @@
+	# This file is managed by Chef - Cookbook Name :: APP_RHEL_guacamoleserver_0_1_0
+	# Any manual changes made to this file will be deleted with the next chef run.
+	
+	# This is a location that will trigger authentication when requested.
+	<Location /guacamole>
+
+		MellonEnable "auth"
+		
+		#Require all granted
+		Order allow,deny
+		Allow from all
+		
+		ProxyPass <%= @proxy_pass %>
+		ProxyPassReverse <%= @proxy_pass_reverse %>
+		ProxyPassReverseCookiePath <%= node['mod_proxy']['proxy_pass_reverse_cookie_path'] %>
+		
+		RequestHeader set X-domain "<%= node['mod_proxy']['request_header']['x_domain'] %>"
+		RequestHeader set X-password <%= node['mod_proxy']['request_header']['x_password'] %>
+		RequestHeader set X-username <%= node['mod_proxy']['request_header']['x_username'] %>
+		RequestHeader set X-groups <%= node['mod_proxy']['request_header']['x_groups'] %>
+		RequestHeader set X-upn <%= node['mod_proxy']['request_header']['x_upn'] %>
+
+	</Location>
+
+	<Location /guacamole/websocket-tunnel>
+	
+		Require all granted
+		
+		ProxyPass <%= node['wstunnel']['proxy_pass'] %>
+		ProxyPassReverse <%= node['wstunnel']['proxy_pass_reverse'] %>
+		ProxyPassReverseCookiePath <%= node['mod_proxy']['proxy_pass_reverse_cookie_path'] %>
+		
+	</Location>
